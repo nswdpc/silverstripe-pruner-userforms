@@ -1,0 +1,32 @@
+{
+    "name": "nswdpc/silverstripe-pruner-userforms",
+    "description": "Silverstriper userforms support for nswdpc/silverstripe-pruner",
+    "type": "silverstripe-vendormodule",
+    "keywords": [
+        "userforms",
+        "pruning",
+        "removal"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "James Ellis",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "NSWDPC\\Prune\\": "src/",
+            "NSWDPC\\Prune\\Tests\\": "tests/",
+        }
+    },
+    "require":
+    {
+        "nswdpc/silverstripe-pruner" : "*",
+        "silverstripe/userforms" : "^5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7",
+        "friendsofphp/php-cs-fixer": "^3"
+    }
+}

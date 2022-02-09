@@ -1,0 +1,21 @@
+---
+Name: nswdpc-pruner-userforms
+After:
+  - '#nswpdc-pruner'
+---
+NSWDPC\Pruner\Pruner:
+  target_models:
+      - 'SilverStripe\UserForms\Model\Submission\SubmittedForm'
+SilverStripe\UserForms\Model\UserDefinedForm:
+  extensions:
+    - NSWDPC\Utility\Pruner\Extensions\AutoPruneExtension
+SilverStripe\UserForms\Model\Submission\SubmittedForm:
+  extensions:
+    - NSWDPC\Utility\Pruner\Extensions\SubmittedFormExtension
+---
+Only:
+  moduleexists: 'dnadesign/silverstripe-elemental-userforms'
+---
+DNADesign\ElementalUserForms\Model\ElementForm:
+  extensions:
+    - NSWDPC\Utility\Pruner\Extensions\AutoPruneExtension
