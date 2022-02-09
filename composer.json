@@ -1,6 +1,6 @@
 {
     "name": "nswdpc/silverstripe-pruner-userforms",
-    "description": "Silverstriper userforms support for nswdpc/silverstripe-pruner",
+    "description": "Silverstripe userforms support for nswdpc/silverstripe-pruner",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "userforms",
