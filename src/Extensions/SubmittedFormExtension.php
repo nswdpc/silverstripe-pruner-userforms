@@ -6,6 +6,7 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\SS_List;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
@@ -23,7 +24,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * In this case, $limit is per parent class
      * @todo write a test for non UDF parent classes
      */
-    public function pruneList(int $days_ago, int $limit)
+    public function pruneList(int $days_ago, int $limit) : SS_List
     {
         $dt = new \DateTime('now -' . $days_ago . ' days');
         $datetime_formatted = $dt->format('Y-m-d H:i:s');
@@ -71,7 +72,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * See {@link SubmittedForm::onBeforeDelete} - SubmittedFileField does not appear to delete its attached file
      * Submitted Form values are deleted in {@link SubmittedForm::onBeforeDelete}
      */
-    public function onBeforePrune()
+    public function onBeforePrune() : void
     {
         // delete all files
         $files = $this->pruneFilesList();
@@ -83,7 +84,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
     /**
      * Called by {@link Pruner} after call to prune()
      */
-    public function onAfterPrune()
+    public function onAfterPrune() : void
     {
     }
 
@@ -91,7 +92,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * @return DataList
      * Every SubmittedForm with an upload field has a {@link SubmittedFormField} which is an instance of {@link SubmittedFileField}
      */
-    public function pruneFilesList()
+    public function pruneFilesList() : SS_List
     {
         $list = ArrayList::create();
         if ($fields = $this->owner->Values()) {
