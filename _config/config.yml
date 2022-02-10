@@ -8,14 +8,14 @@ NSWDPC\Pruner\Pruner:
       - 'SilverStripe\UserForms\Model\Submission\SubmittedForm'
 SilverStripe\UserForms\Model\UserDefinedForm:
   extensions:
-    - NSWDPC\Utility\Pruner\Extensions\AutoPruneExtension
+    - NSWDPC\Pruner\AutoPruneExtension
 SilverStripe\UserForms\Model\Submission\SubmittedForm:
   extensions:
-    - NSWDPC\Utility\Pruner\Extensions\SubmittedFormExtension
+    - NSWDPC\Pruner\SubmittedFormExtension
 ---
 Only:
   moduleexists: 'dnadesign/silverstripe-elemental-userforms'
 ---
 DNADesign\ElementalUserForms\Model\ElementForm:
   extensions:
-    - NSWDPC\Utility\Pruner\Extensions\AutoPruneExtension
+    - NSWDPC\Pruner\AutoPruneExtension
