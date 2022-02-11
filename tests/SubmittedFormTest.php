@@ -16,7 +16,8 @@ use SilverStripe\UserForms\Model\UserDefinedForm;
 use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
 
 /**
- * Test pruning of {@link SubmittedForm} with the {@link NSWDPC\Utility\Pruner\SubmittedFormExtension}
+ * Test pruning of {@link SubmittedForm} via the {@link NSWDPC\Pruner\SubmittedFormExtension}
+ * @author James
  */
 class SubmittedFormTest extends SapphireTest
 {
@@ -106,4 +107,5 @@ class SubmittedFormTest extends SapphireTest
 
 
     }
+
 }
