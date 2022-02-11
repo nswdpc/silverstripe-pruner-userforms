@@ -10,6 +10,7 @@ use SilverStripe\ORM\SS_List;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
+use SilverStripe\UserForms\Model\Submission\SubmittedForm;
 
 /**
  * Provides methods that the {@link PrunerModel} requires to prune SubmittedForm records
@@ -19,43 +20,40 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
 {
 
     /**
-     * @returns ArrayList
      * @note due to Parent relationship changing, a list of Parent classes is found, then tested for the AutoPrune field
      * In this case, $limit is per parent class
-     * @todo write a test for non UDF parent classes
+     * @return ArrayList
      */
     public function pruneList(int $days_ago, int $limit) : SS_List
     {
+
+        // Age boundary
         $dt = new \DateTime('now -' . $days_ago . ' days');
-        $datetime_formatted = $dt->format('Y-m-d H:i:s');
+        $age = $dt->format('Y-m-d H:i:s');
 
         // get all possible parents
         $result = DB::query("SELECT `ParentClass` FROM `SubmittedForm` GROUP BY `ParentClass`");
         $parents = [];
         if ($result) {
             foreach ($result as $record) {
-                $parents[] = $record['ParentClass'];
+                $parents[ $record['ParentClass'] ] = DataObject::getSchema()->tableName( $record['ParentClass'] );
             }
         }
 
         $multilist = ArrayList::create();
         if (!empty($parents)) {
-            foreach ($parents as $parent_class) {
+            foreach ($parents as $parentClass => $table) {
                 try {
-                    $table = Config::inst()->get($parent_class, 'table_name', Config::UNINHERITED);
-                    if (!$table) {
-                        $table = $parent_class;
-                    }
-                    $list = \SilverStripe\UserForms\Model\Submission\SubmittedForm::get()
-                                // limit to autoprune parents
-                                ->innerJoin(
-                                    $table,
-                                    "\"SubmittedForm\".\"ParentID\" = \"" . Convert::raw2sql($table) . "\".\"ID\""
-                                    . " AND \"" . Convert::raw2sql($table) . "\".\"AutoPrune\" = 1"
-                                )
-                                ->filter('Created:LessThan', $datetime_formatted)
-                                ->sort('Created ASC')
-                                ->limit($limit);
+                    $list = SubmittedForm::get()
+                        ->innerJoin(
+                            $table,
+                            "`SubmittedForm`.`ParentID` = `" . Convert::raw2sql($table) . "`.`ID`"
+                            . " AND `SubmittedForm`.`ParentClass` = '" . Convert::raw2sql($parentClass) . "'"
+                            . " AND `" . Convert::raw2sql($table) . "`.`AutoPrune` = 1"
+                        )
+                        ->filter('Created:LessThan', $age)
+                        ->sort('Created ASC')
+                        ->limit($limit);
                     if ($list) {
                         $multilist->merge($list);
                     }
@@ -74,11 +72,6 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      */
     public function onBeforePrune() : void
     {
-        // delete all files
-        $files = $this->pruneFilesList();
-        foreach ($files as $file) {
-            $file->delete();
-        }
     }
 
     /**
@@ -89,23 +82,11 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
     }
 
     /**
-     * @return DataList
-     * Every SubmittedForm with an upload field has a {@link SubmittedFormField} which is an instance of {@link SubmittedFileField}
+     * Since silverstripe/userforms:5.9.2 files are automatically deleted in SubmittedFileField
+     * @see composer.json version restriction
      */
     public function pruneFilesList() : SS_List
     {
-        $list = ArrayList::create();
-        if ($fields = $this->owner->Values()) {
-            foreach ($fields as $field) {
-                // push files that match the following fields
-                if ($field instanceof \SilverStripe\UserForms\Model\Submission\SubmittedFileField) {
-                    $file = $field->UploadedFile();
-                    if (!empty($file->ID) && $file instanceof File) {
-                        $list->push($file);
-                    }
-                }
-            }
-        }
-        return $list;
+        return ArrayList::create();
     }
 }

@@ -23,7 +23,7 @@
     "require":
     {
         "nswdpc/silverstripe-pruner" : "*",
-        "silverstripe/userforms" : "^5"
+        "silverstripe/userforms" : "^5.9.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7",
