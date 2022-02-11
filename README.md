@@ -18,6 +18,10 @@ composer require nswdpc/silverstripe-pruner-userforms
     1. report_only (1|0, set to 1 to run the job in report only mode, nothing is removed)
 1. Run the job
 
+**Example:** report only on the removal of submitted form records older than 28 days at the time the job runs, 500 records per run:
+
+<img src="./docs/img/queued.png">
+
 ## Limits
 
 As `SubmittedForm` has a [polymorphic has_one parent](https://docs.silverstripe.org/en/4/developer_guides/model/relations/#polymorphic-has-one), the limit parameter specified is used per parent class. If you have specified a limit of 50 and have multiple parent classes for the SubmittedForm model, that limit will be set per parent.
