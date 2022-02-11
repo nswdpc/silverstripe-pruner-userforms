@@ -12,11 +12,17 @@ composer require nswdpc/silverstripe-pruner-userforms
 ## Using
 
 1. Create a `NSWDPC\Pruner\PruneJob` queued job with the following constructor arguments:
-    1. days_ago (int, remove records older than this number of days)
+    1. days_ago (float, remove records older than this number of days)
     1. limit (int, limit records in this operation to this number)
     1. targets (string `SilverStripe\UserForms\Model\Submission\SubmittedForm`)
     1. report_only (1|0, set to 1 to run the job in report only mode, nothing is removed)
 1. Run the job
+
+## Limits
+
+As `SubmittedForm` has a [polymorphic has_one parent](https://docs.silverstripe.org/en/4/developer_guides/model/relations/#polymorphic-has-one), the limit parameter specified is used per parent class. If you have specified a limit of 50 and have multiple parent classes for the SubmittedForm model, that limit will be set per parent.
+
+This will be the case if you have [dnadesign/silverstripe-elemental-userforms](https://github.com/dnadesign/silverstripe-elemental-userforms) active alongside [silverstripe/userforms](https://github.com/silverstripe/silverstripe-userforms).
 
 ## Maintainers
 
