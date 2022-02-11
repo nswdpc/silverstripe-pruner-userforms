@@ -1,0 +1,45 @@
+SilverStripe\Assets\File:
+  remove-1:
+    FileFilename: remove-1.jpg
+    Name: remove-1.jpg
+  remove-2:
+    FileFilename: remove-2.txt
+    Name: remove-2.txt
+  remove-3:
+    FileFilename: remove-3.pdf
+    Name: remove-3.pdf
+  keep-1:
+    FileFilename: keep-1.pdf
+    Name: keep-1.pdf
+  keep-2:
+    FileFilename: keep-2.pdf
+    Name: keep-2.pdf
+DNADesign\ElementalUserForms\Model\ElementForm:
+  parent-form-element:
+    Title: 'Parent form element'
+    AutoPrune: 1
+SilverStripe\UserForms\Model\Submission\SubmittedFileField:
+  submitted-file-remove-1:
+    UploadedFile: =>SilverStripe\Assets\File.remove-1
+  submitted-file-remove-2:
+    UploadedFile: =>SilverStripe\Assets\File.remove-2
+  submitted-file-remove-3:
+    UploadedFile: =>SilverStripe\Assets\File.remove-3
+  submitted-file-keep-1:
+    UploadedFile: =>SilverStripe\Assets\File.keep-1
+  submitted-file-keep-2:
+    UploadedFile: =>SilverStripe\Assets\File.keep-2
+SilverStripe\UserForms\Model\Submission\SubmittedForm:
+  ancient:
+    Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.parent-form-element
+    Created: '2003-01-01 13:45:00'
+    Values:
+      - =>SilverStripe\UserForms\Model\Submission\SubmittedFileField.submitted-file-remove-1
+      - =>SilverStripe\UserForms\Model\Submission\SubmittedFileField.submitted-file-remove-2
+      - =>SilverStripe\UserForms\Model\Submission\SubmittedFileField.submitted-file-remove-3
+  future:
+    Parent: =>DNADesign\ElementalUserForms\Model\ElementForm.parent-form-element
+    Created: '2103-01-01 13:45:00'
+    Values:
+      - =>SilverStripe\UserForms\Model\Submission\SubmittedFileField.submitted-file-keep-1
+      - =>SilverStripe\UserForms\Model\Submission\SubmittedFileField.submitted-file-keep-2
