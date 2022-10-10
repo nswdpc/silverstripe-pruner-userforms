@@ -42,7 +42,7 @@ class SubmittedFormTest extends SapphireTest
      */
     protected $limit = 500;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -55,7 +55,7 @@ class SubmittedFormTest extends SapphireTest
         }
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
         TestAssetStore::reset();
