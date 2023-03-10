@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Pruner;
+namespace NSWDPC\Pruner\Tests;
 
 use DNADesign\ElementalUserForms\Model\ElementForm;
 use NSWDPC\Pruner\Pruner;

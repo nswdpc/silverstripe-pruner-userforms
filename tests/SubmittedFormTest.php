@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Pruner;
+namespace NSWDPC\Pruner\Tests;
 
 use NSWDPC\Pruner\Pruner;
 use SilverStripe\Dev\SapphireTest;

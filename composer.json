@@ -16,8 +16,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "NSWDPC\\Prune\\": "src/",
-            "NSWDPC\\Prune\\Tests\\": "tests/"
+            "NSWDPC\\Pruner\\": "src/",
+            "NSWDPC\\Pruner\\Tests\\": "tests/"
         }
     },
     "require":
