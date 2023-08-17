@@ -52,6 +52,7 @@ class SubmittedFormTest extends SapphireTest
             /** @var File $file */
             $file = DataObject::get_by_id(File::class, $fileID);
             $file->setFromString(str_repeat('x', 1000000), $file->getFilename());
+            $file->write();
         }
     }
 
@@ -77,9 +78,9 @@ class SubmittedFormTest extends SapphireTest
         $files = File::get();
         foreach($files as $file) {
             if( strpos($file->Name, "remove") === 0 ) {
-                $removeFiles[] = $file->ID;
+                $removeFiles[$file->ID] = TestAssetStore::getLocalPath($file);
             } else if( strpos($file->Name, "keep") === 0 ) {
-                $keepFiles[] = $file->ID;
+                $keepFiles[$file->ID] = TestAssetStore::getLocalPath($file);
             } else {
                 throw new \InvalidArgumentException("File names should be prefixed remove or keep for this test");
             }
@@ -99,8 +100,14 @@ class SubmittedFormTest extends SapphireTest
 
         $fileNames = File::get()->filter(['ID' => $keepFiles])->column('Name');
 
-        $this->assertEquals( $keepFiles, File::get()->filter(['ID' => $keepFiles])->column('ID'), "Kept files match" );
-        $this->assertEquals( 0, File::get()->filter(['ID' => $removeFiles])->count(), "Remove files gone" );
+        $this->assertEquals( array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match" );
+        $this->assertEquals( 0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone" );
+        foreach($keepFiles as $keepFileId => $keepFilePath) {
+            $this->assertTrue(file_exists($keepFilePath));
+        }
+        foreach($removeFiles as $removeFileId => $removeFilePath) {
+            $this->assertFalse(file_exists($removeFilePath));
+        }
 
         $this->assertEmpty($results['keys'], 'Keys in results are empty');
         $this->assertFalse($results['report_only'], 'Was not report_only');
