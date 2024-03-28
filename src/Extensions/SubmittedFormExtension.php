@@ -58,7 +58,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
                         $multilist->merge($list);
                     }
                 } catch (\Exception $e) {
-                    Log::log("Failed to get SubmittedForm record list. Error=" . $e->getMesssage(), Log::NOTICE);
+                    Logger::log("Failed to get SubmittedForm record list. Error=" . $e->getMesssage(), Logger::NOTICE);
                 }
             }
         }
