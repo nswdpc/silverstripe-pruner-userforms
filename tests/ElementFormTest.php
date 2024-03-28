@@ -45,9 +45,9 @@ class ElementFormTest extends SapphireTest
 
     public function setUp() : void
     {
-        parent::setUp();
 
         if(class_exists(ElementForm::class)) {
+            parent::setUp();
 
             TestAssetStore::activate('ElementFormTest');
             $fileIDs = $this->allFixtureIDs(File::class);
@@ -63,9 +63,8 @@ class ElementFormTest extends SapphireTest
 
     public function tearDown() : void
     {
-        parent::tearDown();
-
         if(class_exists(ElementForm::class)) {
+            parent::tearDown();
             TestAssetStore::reset();
         }
     }
