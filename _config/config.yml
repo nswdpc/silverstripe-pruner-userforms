@@ -12,6 +12,9 @@ SilverStripe\UserForms\Model\UserDefinedForm:
 SilverStripe\UserForms\Model\Submission\SubmittedForm:
   extensions:
     - NSWDPC\Pruner\SubmittedFormExtension
+SilverStripe\UserForms\Model\Submission\SubmittedFileField:
+  extensions:
+    - NSWDPC\Pruner\SubmittedFileFieldExtension
 ---
 Only:
   moduleexists: 'dnadesign/silverstripe-elemental-userforms'

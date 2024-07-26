@@ -17,9 +17,10 @@ use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
 
 /**
  * Test pruning of {@link SubmittedForm} via the {@link NSWDPC\Pruner\SubmittedFormExtension}
+ * for SubmittedForm records with a parent that has no DB table
  * @author James
  */
-class SubmittedFormTest extends SapphireTest
+class SubmittedFormParentWithNoTableTest extends SapphireTest
 {
 
     /**
@@ -30,7 +31,14 @@ class SubmittedFormTest extends SapphireTest
     /**
      * @var string
      */
-    protected static $fixture_file = 'SubmittedFormTest.yml';
+    protected static $fixture_file = 'SubmittedFormParentWithNoTableTest.yml';
+
+    /**
+     * @var array
+     */
+    protected static $extra_dataobjects = [
+        ParentWithNoTable::class
+    ];
 
     /**
      * @var int
@@ -46,7 +54,7 @@ class SubmittedFormTest extends SapphireTest
     {
         parent::setUp();
 
-        TestAssetStore::activate('SubmittedFormTest');
+        TestAssetStore::activate('SubmittedFormParentWithNoTableTest');
         $fileIDs = $this->allFixtureIDs(File::class);
         foreach ($fileIDs as $fileID) {
             /** @var File $file */
