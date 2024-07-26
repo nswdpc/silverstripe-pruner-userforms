@@ -24,8 +24,8 @@
     },
     "require":
     {
-        "nswdpc/silverstripe-pruner" : "*",
-        "silverstripe/userforms" : "^5.11"
+        "nswdpc/silverstripe-pruner" : "^1",
+        "silverstripe/userforms" : "^6"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
