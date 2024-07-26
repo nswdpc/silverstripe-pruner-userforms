@@ -2,7 +2,6 @@
 
 namespace NSWDPC\Pruner\Tests;
 
-use DNADesign\ElementalUserForms\Model\ElementForm;
 use NSWDPC\Pruner\Pruner;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Assets\File;
@@ -17,10 +16,11 @@ use SilverStripe\UserForms\Model\UserDefinedForm;
 use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
 
 /**
- * Test for ElementForm as a parent support from module
+ * Test pruning of {@link SubmittedForm} via the {@link NSWDPC\Pruner\SubmittedFormExtension}
+ * for SubmittedForm records with a parent that has no DB table
  * @author James
  */
-class ElementFormTest extends SapphireTest
+class SubmittedFormParentWithNoTableTest extends SapphireTest
 {
 
     /**
@@ -31,7 +31,14 @@ class ElementFormTest extends SapphireTest
     /**
      * @var string
      */
-    protected static $fixture_file = 'ElementFormTest.yml';
+    protected static $fixture_file = 'SubmittedFormParentWithNoTableTest.yml';
+
+    /**
+     * @var array
+     */
+    protected static $extra_dataobjects = [
+        ParentWithNoTable::class
+    ];
 
     /**
      * @var int
@@ -45,38 +52,26 @@ class ElementFormTest extends SapphireTest
 
     public function setUp() : void
     {
+        parent::setUp();
 
-        if(class_exists(ElementForm::class)) {
-            parent::setUp();
-
-            TestAssetStore::activate('ElementFormTest');
-            $fileIDs = $this->allFixtureIDs(File::class);
-            foreach ($fileIDs as $fileID) {
-                /** @var File $file */
-                $file = DataObject::get_by_id(File::class, $fileID);
-                $file->setFromString(str_repeat('x', 1000000), $file->getFilename());
-                $file->write();
-            }
-
+        TestAssetStore::activate('SubmittedFormParentWithNoTableTest');
+        $fileIDs = $this->allFixtureIDs(File::class);
+        foreach ($fileIDs as $fileID) {
+            /** @var File $file */
+            $file = DataObject::get_by_id(File::class, $fileID);
+            $file->setFromString(str_repeat('x', 1000000), $file->getFilename());
+            $file->write();
         }
     }
 
     public function tearDown() : void
     {
-        if(class_exists(ElementForm::class)) {
-            parent::tearDown();
-            TestAssetStore::reset();
-        }
+        parent::tearDown();
+        TestAssetStore::reset();
     }
 
-    public function testPruneSubmittedFormInElementForm()
+    public function testPruneSubmittedForm()
     {
-        /**
-         * If the class doesn't exist, the module is not installed
-         */
-        if(!class_exists(ElementForm::class)) {
-            return;
-        }
 
         $target_models = [
             SubmittedForm::class
@@ -114,7 +109,7 @@ class ElementFormTest extends SapphireTest
         $fileNames = File::get()->filter(['ID' => $keepFiles])->column('Name');
 
         $this->assertEquals( array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match" );
-        $this->assertEquals( 0, File::get()->filter(['ID' => $removeFiles])->count(), "Remove files gone" );
+        $this->assertEquals( 0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone" );
         foreach($keepFiles as $keepFileId => $keepFilePath) {
             $this->assertTrue(file_exists($keepFilePath));
         }
