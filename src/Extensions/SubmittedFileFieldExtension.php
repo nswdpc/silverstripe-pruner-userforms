@@ -11,7 +11,6 @@ use SilverStripe\Assets\File;
  */
 class SubmittedFileFieldExtension extends DataExtension
 {
-
     /**
      * Prior to field delete, remove linked file
      */

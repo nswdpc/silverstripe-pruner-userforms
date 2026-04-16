@@ -11,7 +11,6 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\SS_List;
 use SilverStripe\Assets\File;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
 
@@ -22,20 +21,19 @@ use SilverStripe\UserForms\Model\Submission\SubmittedForm;
  */
 class SubmittedFormExtension extends DataExtension implements PrunerInterface
 {
-
     /**
      * @note due to Parent relationship changing, a list of Parent classes is found, then tested for the AutoPrune field
      * In this case, $limit is per parent class
      * @param int $beforeDaysAgo set upper limit of age of record
      * @param int $limit limit of records to get
      */
-    public function pruneList(int $beforeDaysAgo, int $limit) : SS_List
+    public function pruneList(int $beforeDaysAgo, int $limit): SS_List
     {
 
         try {
             $multiList = ArrayList::create();
             // get all possible parents
-            $submittedFormTableName = DataObject::getSchema()->tableName( SubmittedForm::class );
+            $submittedFormTableName = DataObject::getSchema()->tableName(SubmittedForm::class);
             $result = DB::query('SELECT "ParentClass" '
                 . ' FROM "' . Convert::raw2sql($submittedFormTableName) . '"'
                 . ' GROUP BY "ParentClass"');
@@ -44,13 +42,13 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
                 foreach ($result as $record) {
                     // The classname to use is the parent data class that has a table
                     $parentDataClass = $this->getDataClassAncestor($record['ParentClass']);
-                    if(!$parentDataClass) {
+                    if (!$parentDataClass) {
                         Logger::log("Class '{$record['ParentClass']}' has no ancestor ancestor that can be queried", "INFO");
                         continue;
                     }
 
                     // may have already retrieve for this data class
-                    if(in_array($parentDataClass, $seen, true)) {
+                    if (in_array($parentDataClass, $seen, true)) {
                         continue;
                     }
 
@@ -78,14 +76,15 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * @param int $beforeDaysAgo set upper limit of age of record
      * @param int $limit limit of records to get
      */
-    public function getSubmittedForms(string $parentClass, int $beforeDaysAgo, int $limit) : ?DataList {
-        $tableName = DataObject::getSchema()->tableName( $parentClass );
-        if(!$tableName) {
+    public function getSubmittedForms(string $parentClass, int $beforeDaysAgo, int $limit): ?DataList
+    {
+        $tableName = DataObject::getSchema()->tableName($parentClass);
+        if (!$tableName) {
             return null;
         }
 
         $hasTable = ClassInfo::hasTable($tableName);
-        if(!$hasTable) {
+        if (!$hasTable) {
             // This would be a parent class of a SubmittedForm that has no DB fields
             // and therefore no table
             return null;
@@ -118,15 +117,16 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * Get the first ancestor class of this class that has a DB table
      * and has the AutoPrune field, starting with root class
      */
-    protected function getDataClassAncestor(string $className) : ?string {
+    protected function getDataClassAncestor(string $className): ?string
+    {
         $ancestry = array_reverse(ClassInfo::ancestry($className, true));
-        foreach($ancestry as $ancestorClassName) {
+        foreach ($ancestry as $ancestorClassName) {
             $fieldSpec = DataObject::getSchema()->fieldSpec(
                 $ancestorClassName,
                 "AutoPrune",
-                DataObjectSchema::DB_ONLY|DataObjectSchema::UNINHERITED
+                DataObjectSchema::DB_ONLY | DataObjectSchema::UNINHERITED
             );
-            if($fieldSpec) {
+            if ($fieldSpec) {
                 return $ancestorClassName;
             }
         }
@@ -139,14 +139,14 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * See {@link SubmittedForm::onBeforeDelete} - SubmittedFileField does not appear to delete its attached file
      * Submitted Form values are deleted in {@link SubmittedForm::onBeforeDelete}
      */
-    public function onBeforePrune() : void
+    public function onBeforePrune(): void
     {
     }
 
     /**
      * Called by {@link Pruner} after call to prune()
      */
-    public function onAfterPrune() : void
+    public function onAfterPrune(): void
     {
     }
 
@@ -154,7 +154,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * Since silverstripe/userforms:5.9.2 files are automatically deleted in SubmittedFileField
      * @see composer.json version restriction
      */
-    public function pruneFilesList() : SS_List
+    public function pruneFilesList(): SS_List
     {
         return ArrayList::create();
     }

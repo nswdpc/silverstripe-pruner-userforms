@@ -6,15 +6,9 @@ use DNADesign\ElementalUserForms\Model\ElementForm;
 use NSWDPC\Pruner\Pruner;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Dev\TestOnly;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
-use SilverStripe\UserForms\Model\UserDefinedForm;
-use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
 
 /**
  * Test for ElementForm as a parent support from module
@@ -22,7 +16,6 @@ use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
  */
 class ElementFormTest extends SapphireTest
 {
-
     /**
      * @var bool
      */
@@ -44,10 +37,10 @@ class ElementFormTest extends SapphireTest
     protected $limit = 500;
 
     #[\Override]
-    public function setUp() : void
+    public function setUp(): void
     {
 
-        if(class_exists(ElementForm::class)) {
+        if (class_exists(ElementForm::class)) {
             parent::setUp();
 
             TestAssetStore::activate('ElementFormTest');
@@ -63,9 +56,9 @@ class ElementFormTest extends SapphireTest
     }
 
     #[\Override]
-    public function tearDown() : void
+    public function tearDown(): void
     {
-        if(class_exists(ElementForm::class)) {
+        if (class_exists(ElementForm::class)) {
             parent::tearDown();
             TestAssetStore::reset();
         }
@@ -76,7 +69,7 @@ class ElementFormTest extends SapphireTest
         /**
          * If the class doesn't exist, the module is not installed
          */
-        if(!class_exists(ElementForm::class)) {
+        if (!class_exists(ElementForm::class)) {
             return;
         }
 
@@ -91,7 +84,7 @@ class ElementFormTest extends SapphireTest
         $removeFiles = [];
         $keepFiles = [];
         $files = File::get();
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if (str_starts_with($file->Name, "remove")) {
                 $removeFiles[$file->ID] = TestAssetStore::getLocalPath($file);
             } elseif (str_starts_with($file->Name, "keep")) {
@@ -115,13 +108,13 @@ class ElementFormTest extends SapphireTest
 
         File::get()->filter(['ID' => $keepFiles])->column('Name');
 
-        $this->assertEquals( array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match" );
-        $this->assertEquals( 0, File::get()->filter(['ID' => $removeFiles])->count(), "Remove files gone" );
-        foreach($keepFiles as $keepFilePath) {
+        $this->assertEquals(array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match");
+        $this->assertEquals(0, File::get()->filter(['ID' => $removeFiles])->count(), "Remove files gone");
+        foreach ($keepFiles as $keepFilePath) {
             $this->assertTrue(file_exists($keepFilePath));
         }
 
-        foreach($removeFiles as $removeFilePath) {
+        foreach ($removeFiles as $removeFilePath) {
             $this->assertFalse(file_exists($removeFilePath));
         }
 

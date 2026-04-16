@@ -5,15 +5,9 @@ namespace NSWDPC\Pruner\Tests;
 use NSWDPC\Pruner\Pruner;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Dev\TestOnly;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
-use SilverStripe\UserForms\Model\UserDefinedForm;
-use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
 
 /**
  * Test pruning of {@link SubmittedForm} via the {@link NSWDPC\Pruner\SubmittedFormExtension}
@@ -22,7 +16,6 @@ use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
  */
 class SubmittedFormParentWithNoTableTest extends SapphireTest
 {
-
     /**
      * @var bool
      */
@@ -47,7 +40,7 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
      */
     protected $limit = 500;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +54,7 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
         }
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         parent::tearDown();
         TestAssetStore::reset();
@@ -81,7 +74,7 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
         $removeFiles = [];
         $keepFiles = [];
         $files = File::get();
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if (str_starts_with($file->Name, "remove")) {
                 $removeFiles[$file->ID] = TestAssetStore::getLocalPath($file);
             } elseif (str_starts_with($file->Name, "keep")) {
@@ -105,13 +98,13 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
 
         File::get()->filter(['ID' => $keepFiles])->column('Name');
 
-        $this->assertEquals( array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match" );
-        $this->assertEquals( 0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone" );
-        foreach($keepFiles as $keepFilePath) {
+        $this->assertEquals(array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match");
+        $this->assertEquals(0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone");
+        foreach ($keepFiles as $keepFilePath) {
             $this->assertTrue(file_exists($keepFilePath));
         }
 
-        foreach($removeFiles as $removeFilePath) {
+        foreach ($removeFiles as $removeFilePath) {
             $this->assertFalse(file_exists($removeFilePath));
         }
 
