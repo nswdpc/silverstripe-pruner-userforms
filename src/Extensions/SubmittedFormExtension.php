@@ -18,6 +18,7 @@ use SilverStripe\UserForms\Model\Submission\SubmittedForm;
 /**
  * Provides methods that the {@link PrunerModel} requires to prune SubmittedForm records
  * @note remove backup
+ * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\UserForms\Model\Submission\SubmittedForm & static)>
  */
 class SubmittedFormExtension extends DataExtension implements PrunerInterface
 {
@@ -27,7 +28,6 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * In this case, $limit is per parent class
      * @param int $beforeDaysAgo set upper limit of age of record
      * @param int $limit limit of records to get
-     * @return SS_List
      */
     public function pruneList(int $beforeDaysAgo, int $limit) : SS_List
     {
@@ -36,9 +36,9 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
             $multiList = ArrayList::create();
             // get all possible parents
             $submittedFormTableName = DataObject::getSchema()->tableName( SubmittedForm::class );
-            $result = DB::query("SELECT \"ParentClass\" "
-                . " FROM \"" . Convert::raw2sql($submittedFormTableName) . "\""
-                . " GROUP BY \"ParentClass\"");
+            $result = DB::query('SELECT "ParentClass" '
+                . ' FROM "' . Convert::raw2sql($submittedFormTableName) . '"'
+                . ' GROUP BY "ParentClass"');
             $seen = [];
             if ($result) {
                 foreach ($result as $record) {
@@ -48,21 +48,24 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
                         Logger::log("Class '{$record['ParentClass']}' has no ancestor ancestor that can be queried", "INFO");
                         continue;
                     }
+
                     // may have already retrieve for this data class
-                    if(in_array($parentDataClass, $seen)) {
+                    if(in_array($parentDataClass, $seen, true)) {
                         continue;
                     }
+
                     $seen[] = $parentDataClass;// record as 'seen'
                     $list = $this->getSubmittedForms($parentDataClass, $beforeDaysAgo, $limit);
-                    if ($list) {
+                    if ($list instanceof \SilverStripe\ORM\DataList) {
                         // Merge into current list
                         $multiList->merge($list);
                     }
                 }
             }
-        } catch (\Exception $e) {
-            Logger::log("Failed to get list for pruning. Error=" . $e->getMessage(), "NOTICE");
+        } catch (\Exception $exception) {
+            Logger::log("Failed to get list for pruning. Error=" . $exception->getMessage(), "NOTICE");
         }
+
         // @phpstan-ignore variable.undefined
         return $multiList;
     }
@@ -80,15 +83,18 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
         if(!$tableName) {
             return null;
         }
+
         $hasTable = ClassInfo::hasTable($tableName);
         if(!$hasTable) {
             // This would be a parent class of a SubmittedForm that has no DB fields
             // and therefore no table
             return null;
         }
+
         // Age boundary
         $dt = new \DateTime();
         $dt->modify("now -{$beforeDaysAgo} days");
+
         $beforeDate = $dt->format('Y-m-d H:i:s');
         /**
          * include all subclasses of this parent class
@@ -98,21 +104,19 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
         $list = SubmittedForm::get()
             ->innerJoin(
                 Convert::raw2sql($tableName),
-                "\"SubmittedForm\".\"ParentID\" = \"" . Convert::raw2sql($tableName) . "\".\"ID\""
-                . " AND \"" . Convert::raw2sql($tableName) . "\".\"AutoPrune\" = 1"
+                '"SubmittedForm"."ParentID" = "' . Convert::raw2sql($tableName) . '"."ID"'
+                . ' AND "' . Convert::raw2sql($tableName) . '"."AutoPrune" = 1'
             )->filter([
                 "Created:LessThan" => $beforeDate,
                 "ParentClass" => $subClasses
             ])->sort('Created ASC')
             ->limit($limit);
-        return $list ? $list : null;
+        return $list ?: null;
     }
 
     /**
      * Get the first ancestor class of this class that has a DB table
      * and has the AutoPrune field, starting with root class
-     * @param string $className
-     * @return string|null
      */
     protected function getDataClassAncestor(string $className) : ?string {
         $ancestry = array_reverse(ClassInfo::ancestry($className, true));
@@ -126,6 +130,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
                 return $ancestorClassName;
             }
         }
+
         return null;
     }
 

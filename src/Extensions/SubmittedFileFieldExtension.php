@@ -7,6 +7,7 @@ use SilverStripe\Assets\File;
 
 /**
  * SubmittedFileField extension handling
+ * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\UserForms\Model\Submission\SubmittedFileField & static)>
  */
 class SubmittedFileFieldExtension extends DataExtension
 {
@@ -16,7 +17,7 @@ class SubmittedFileFieldExtension extends DataExtension
      */
     public function onBeforeDelete()
     {
-        $file = $this->owner->UploadedFile();
+        $file = $this->getOwner()->UploadedFile();
         if ($file && $file->exists()) {
             $result = $file->deleteFile();
             $result = $file->doArchive();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Pruner\Tests;
 
 use SilverStripe\ORM\DataObject;

@@ -67,7 +67,7 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
         TestAssetStore::reset();
     }
 
-    public function testPruneSubmittedForm()
+    public function testPruneSubmittedForm(): void
     {
 
         $target_models = [
@@ -78,13 +78,13 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
 
         $totalRecords = SubmittedForm::get();
         $totalRecordsCount = $totalRecords->count();
-
-        $removeFiles = $keepFiles = [];
+        $removeFiles = [];
+        $keepFiles = [];
         $files = File::get();
         foreach($files as $file) {
-            if( strpos($file->Name, "remove") === 0 ) {
+            if (str_starts_with($file->Name, "remove")) {
                 $removeFiles[$file->ID] = TestAssetStore::getLocalPath($file);
-            } else if( strpos($file->Name, "keep") === 0 ) {
+            } elseif (str_starts_with($file->Name, "keep")) {
                 $keepFiles[$file->ID] = TestAssetStore::getLocalPath($file);
             } else {
                 throw new \InvalidArgumentException("File names should be prefixed remove or keep for this test");
@@ -103,14 +103,15 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
         // check records remaining
         $this->assertEquals(1, $unpruned, "Unpruned == expectedToKeep count");
 
-        $fileNames = File::get()->filter(['ID' => $keepFiles])->column('Name');
+        File::get()->filter(['ID' => $keepFiles])->column('Name');
 
         $this->assertEquals( array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match" );
         $this->assertEquals( 0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone" );
-        foreach($keepFiles as $keepFileId => $keepFilePath) {
+        foreach($keepFiles as $keepFilePath) {
             $this->assertTrue(file_exists($keepFilePath));
         }
-        foreach($removeFiles as $removeFileId => $removeFilePath) {
+
+        foreach($removeFiles as $removeFilePath) {
             $this->assertFalse(file_exists($removeFilePath));
         }
 
