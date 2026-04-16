@@ -11,7 +11,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\TestOnly;
-use Silverstripe\Assets\Dev\TestAssetStore;
+use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
 use SilverStripe\UserForms\Model\UserDefinedForm;
 use SilverStripe\UserForms\Model\Submission\SubmittedFileField;

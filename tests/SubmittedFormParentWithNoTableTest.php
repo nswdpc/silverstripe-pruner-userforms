@@ -10,7 +10,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\TestOnly;
-use Silverstripe\Assets\Dev\TestAssetStore;
+use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
 use SilverStripe\UserForms\Model\UserDefinedForm;
 use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
@@ -33,9 +33,6 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
      */
     protected static $fixture_file = 'SubmittedFormParentWithNoTableTest.yml';
 
-    /**
-     * @var array
-     */
     protected static $extra_dataobjects = [
         ParentWithNoTable::class
     ];

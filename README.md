@@ -5,7 +5,7 @@ Userforms extension to `nswdpc/silverstripe-pruner`, to remove submitted form re
 
 ## Install
 
-```shell
+```sh
 composer require nswdpc/silverstripe-pruner-userforms
 ```
 
@@ -30,7 +30,7 @@ This will be the case if you have [dnadesign/silverstripe-elemental-userforms](h
 
 ## Maintainers
 
-+ [dpcdigital@NSWDPC:~$](https://dpc.nsw.gov.au)
+PD Web Team
 
 ## License
 

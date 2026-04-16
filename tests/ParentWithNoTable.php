@@ -12,6 +12,8 @@ use SilverStripe\UserForms\Model\UserDefinedForm;
 class ParentWithNoTable extends UserDefinedForm implements TestOnly
 {
 
+    private static string $table_name = "PrunerParentWithNoTable";
+
     public function someSpecificMethod() : ?string {
         return null;
     }

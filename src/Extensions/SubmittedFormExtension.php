@@ -63,6 +63,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
         } catch (\Exception $e) {
             Logger::log("Failed to get list for pruning. Error=" . $e->getMessage(), "NOTICE");
         }
+        // @phpstan-ignore variable.undefined
         return $multiList;
     }
 
@@ -74,7 +75,7 @@ class SubmittedFormExtension extends DataExtension implements PrunerInterface
      * @param int $beforeDaysAgo set upper limit of age of record
      * @param int $limit limit of records to get
      */
-    public function getSubmittedForms(string $parentClass, string $beforeDaysAgo, int $limit) : ?DataList {
+    public function getSubmittedForms(string $parentClass, int $beforeDaysAgo, int $limit) : ?DataList {
         $tableName = DataObject::getSchema()->tableName( $parentClass );
         if(!$tableName) {
             return null;
