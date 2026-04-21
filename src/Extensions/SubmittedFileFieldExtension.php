@@ -2,14 +2,14 @@
 
 namespace NSWDPC\Pruner;
 
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\Assets\File;
 
 /**
  * SubmittedFileField extension handling
- * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\UserForms\Model\Submission\SubmittedFileField & static)>
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\UserForms\Model\Submission\SubmittedFileField & static)>
  */
-class SubmittedFileFieldExtension extends DataExtension
+class SubmittedFileFieldExtension extends Extension
 {
     /**
      * Prior to field delete, remove linked file
