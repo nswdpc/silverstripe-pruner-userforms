@@ -5,15 +5,9 @@ namespace NSWDPC\Pruner\Tests;
 use NSWDPC\Pruner\Pruner;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Dev\TestOnly;
-use Silverstripe\Assets\Dev\TestAssetStore;
+use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
-use SilverStripe\UserForms\Model\UserDefinedForm;
-use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
 
 /**
  * Test pruning of {@link SubmittedForm} via the {@link NSWDPC\Pruner\SubmittedFormExtension}
@@ -22,7 +16,6 @@ use SilverStripe\UserForms\Model\Submission\SubmittedFileField;
  */
 class SubmittedFormParentWithNoTableTest extends SapphireTest
 {
-
     /**
      * @var bool
      */
@@ -33,9 +26,6 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
      */
     protected static $fixture_file = 'SubmittedFormParentWithNoTableTest.yml';
 
-    /**
-     * @var array
-     */
     protected static $extra_dataobjects = [
         ParentWithNoTable::class
     ];
@@ -50,7 +40,7 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
      */
     protected $limit = 500;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -64,13 +54,13 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
         }
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         parent::tearDown();
         TestAssetStore::reset();
     }
 
-    public function testPruneSubmittedForm()
+    public function testPruneSubmittedForm(): void
     {
 
         $target_models = [
@@ -81,13 +71,13 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
 
         $totalRecords = SubmittedForm::get();
         $totalRecordsCount = $totalRecords->count();
-
-        $removeFiles = $keepFiles = [];
+        $removeFiles = [];
+        $keepFiles = [];
         $files = File::get();
-        foreach($files as $file) {
-            if( strpos($file->Name, "remove") === 0 ) {
+        foreach ($files as $file) {
+            if (str_starts_with($file->Name, "remove")) {
                 $removeFiles[$file->ID] = TestAssetStore::getLocalPath($file);
-            } else if( strpos($file->Name, "keep") === 0 ) {
+            } elseif (str_starts_with($file->Name, "keep")) {
                 $keepFiles[$file->ID] = TestAssetStore::getLocalPath($file);
             } else {
                 throw new \InvalidArgumentException("File names should be prefixed remove or keep for this test");
@@ -106,14 +96,15 @@ class SubmittedFormParentWithNoTableTest extends SapphireTest
         // check records remaining
         $this->assertEquals(1, $unpruned, "Unpruned == expectedToKeep count");
 
-        $fileNames = File::get()->filter(['ID' => $keepFiles])->column('Name');
+        File::get()->filter(['ID' => $keepFiles])->column('Name');
 
-        $this->assertEquals( array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match" );
-        $this->assertEquals( 0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone" );
-        foreach($keepFiles as $keepFileId => $keepFilePath) {
+        $this->assertEquals(array_keys($keepFiles), File::get()->filter(['ID' => array_keys($keepFiles)])->column('ID'), "Kept files match");
+        $this->assertEquals(0, File::get()->filter(['ID' => array_keys($removeFiles)])->count(), "Remove files gone");
+        foreach ($keepFiles as $keepFilePath) {
             $this->assertTrue(file_exists($keepFilePath));
         }
-        foreach($removeFiles as $removeFileId => $removeFilePath) {
+
+        foreach ($removeFiles as $removeFilePath) {
             $this->assertFalse(file_exists($removeFilePath));
         }
 
