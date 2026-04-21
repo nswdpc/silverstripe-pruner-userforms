@@ -24,7 +24,7 @@
     },
     "require":
     {
-        "nswdpc/silverstripe-pruner" : "^1",
+        "nswdpc/silverstripe-pruner" : "^1.1",
         "silverstripe/userforms" : "^6"
     },
     "require-dev": {
