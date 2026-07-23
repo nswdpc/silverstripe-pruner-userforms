@@ -3,13 +3,13 @@
 namespace NSWDPC\Pruner;
 
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataObjectSchema;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\SS_List;
+use SilverStripe\Model\List\SS_List;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Convert;
 use SilverStripe\UserForms\Model\Submission\SubmittedForm;
@@ -17,9 +17,9 @@ use SilverStripe\UserForms\Model\Submission\SubmittedForm;
 /**
  * Provides methods that the {@link PrunerModel} requires to prune SubmittedForm records
  * @note remove backup
- * @extends \SilverStripe\ORM\DataExtension<(\SilverStripe\UserForms\Model\Submission\SubmittedForm & static)>
+ * @extends \SilverStripe\Core\Extension<(\SilverStripe\UserForms\Model\Submission\SubmittedForm & static)>
  */
-class SubmittedFormExtension extends DataExtension implements PrunerInterface
+class SubmittedFormExtension extends Extension implements PrunerInterface
 {
     /**
      * @note due to Parent relationship changing, a list of Parent classes is found, then tested for the AutoPrune field
